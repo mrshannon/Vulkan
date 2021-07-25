@@ -356,17 +356,20 @@ public:
 		{
 			if (node->mesh)
 			{
-				VkDrawIndexedIndirectCommand indirectCmd{};
-				indirectCmd.instanceCount = OBJECT_INSTANCE_COUNT;
-				indirectCmd.firstInstance = m * OBJECT_INSTANCE_COUNT;
-				// @todo: Multiple primitives
-				// A glTF node may consist of multiple primitives, so we may have to do multiple commands per mesh
-				indirectCmd.firstIndex = node->mesh->primitives[0]->firstIndex;
-				indirectCmd.indexCount = node->mesh->primitives[0]->indexCount;
+				for (unsigned int i = 0; i < OBJECT_INSTANCE_COUNT; ++i)
+				{
+					VkDrawIndexedIndirectCommand indirectCmd{};
+					indirectCmd.instanceCount = 1;
+					indirectCmd.firstInstance = m;
+					// @todo: Multiple primitives
+					// A glTF node may consist of multiple primitives, so we may have to do multiple commands per mesh
+					indirectCmd.firstIndex = node->mesh->primitives[0]->firstIndex;
+					indirectCmd.indexCount = node->mesh->primitives[0]->indexCount;
 
-				indirectCommands.push_back(indirectCmd);
+					indirectCommands.push_back(indirectCmd);
 
-				m++;
+					m++;
+				}
 			}
 		}
 
